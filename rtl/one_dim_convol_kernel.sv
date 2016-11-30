@@ -68,7 +68,7 @@ module one_dim_convol_kernel import settings_pkg::*;(
             localparam ADDER_SIZE = (WINDOW_SIZE >> g) + (WINDOW_SIZE % (1 << g) ? 1 : 0);
             reg signed [ADDER_SIZE-1:0][FULL_SIZE-1:0]    adder;
             reg                                           enable_adder;
-        end: sum_stage
+        end: adder_stage
     endgenerate
 //-----------------------------------------------------------------------------
 // Function Section
