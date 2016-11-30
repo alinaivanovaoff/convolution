@@ -61,6 +61,7 @@ module one_dim_convol_kernel import settings_pkg::*;(
     reg         signed [2*DATA_SIZE-1:0]                  mult             [WINDOW_SIZE];
     reg         signed [2*DATA_SIZE-1:0]                  mult_z           [WINDOW_SIZE];
     reg                                                   enable_mult;
+    reg                                                   enable_mult_z;
 
     genvar g;
     generate
@@ -68,7 +69,7 @@ module one_dim_convol_kernel import settings_pkg::*;(
             localparam ADDER_SIZE = (WINDOW_SIZE >> g) + (WINDOW_SIZE % (1 << g) ? 1 : 0);
             reg signed [ADDER_SIZE-1:0][FULL_SIZE-1:0]    adder;
             reg                                           enable_adder;
-        end: sum_stage
+        end: adder_stage
     endgenerate
 //-----------------------------------------------------------------------------
 // Function Section
@@ -91,14 +92,14 @@ module one_dim_convol_kernel import settings_pkg::*;(
         if (reset_synch) begin
             for (int i = 0; i < WINDOW_SIZE; i++) begin
                 shift_reg[i]                             <= '0;
-                shift_data_valid[i]                      <= '0;
+                enable_shift[i]                          <= '0;
             end
         end else begin
             shift_reg[0]                                 <= input_data;
-            shift_data_valid[0]                          <= enable;
+            enable_shift[0]                              <= enable;
             for (int i = 1; i < WINDOW_SIZE; i++) begin
                 shift_reg[i]                             <= shift_reg[i-1];
-                shift_data_valid[i]                      <= shift_data_valid[i-1]; 
+                enable_shift[i]                          <= enable_shift[i-1]; 
             end
         end
     end: ONE_DIM_CONVOL_KERNEL_SHIFT_REG
