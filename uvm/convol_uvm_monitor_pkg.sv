@@ -38,7 +38,6 @@
 package convol_uvm_monitor_pkg;
     import uvm_pkg::*;
     import convol_uvm_transaction_pkg::*;
-    import convol_uvm_pkg::*;
 //-----------------------------------------------------------------------------
     class bus_monitor #(type TTYPE) extends uvm_monitor;
         `uvm_component_param_utils(bus_monitor #(TTYPE))
@@ -55,7 +54,7 @@ package convol_uvm_monitor_pkg;
 
         function void build_phase(uvm_phase phase);
             super.build_phase(phase);
-            void'(uvm_resource_db #(virtual tb_main_if)::read_by_name(.scope("intfs"), .name("tb_main_intf"), .val(tb_vintf)));
+            void'(uvm_resource_db #(virtual tb_main_intf)::read_by_name(.scope("intfs"), .name("tb_main_intf"), .val(tb_vintf)));
             uvm_config_db #(virtual convol_result_intf)::get(this,"","convol_result_intf", vintf);
             out_port = new(.name("out_port"), .parent(this));
         endfunction: build_phase

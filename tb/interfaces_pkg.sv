@@ -43,7 +43,7 @@ interface convol_data_intf import settings_pkg::*; (
     input wire                                            clk,
     input wire                                            reset);
     wire signed [DATA_SIZE-1:0]                           input_data;
-    wire        [DATA_SIZE-1:0]                           coeff            [WINDOW_SIZE],
+    wire        [DATA_SIZE-1:0]                           coeff            [WINDOW_SIZE];
     wire                                                  enable;
     modport master                                        (output input_data, enable);
     modport slave                                         (input  input_data, enable);

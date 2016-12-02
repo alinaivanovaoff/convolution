@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 `timescale 1 ns / 1 ps
 //----------------------------------------------------------------------------- 
-`include "settings_pkg.sv"
+//`include "settings_pkg.sv"
 //-----------------------------------------------------------------------------
 module one_dim_convol_kernel import settings_pkg::*;(
 //-----------------------------------------------------------------------------
@@ -122,29 +122,42 @@ module one_dim_convol_kernel import settings_pkg::*;(
         end
     end: ONE_DIM_CONVOL_KERNEL_MULT
 
-    always_ff @(posedge clk) begin: ONE_DIM_CONVOL_KERNEL_ADDER
-        if (reset_synch) begin
-            for (int i = 1; i <= ADDER_STAGES; i++) begin
-                adder_stage[i].adder                     <= '0;
-                adder_stage[i].enable_adder              <= '0;
-            end
-        end else begin
-            adder_stage[1].enable_adder                  <= enable_mult_z;
-            for (int j = 0; j < adder_stage[0].ADDER_SIZE; j++) begin
-                automatic bit m = (j == (adder_stage[1].ADDER_SIZE - 1)) && (WINDOW_SIZE % 2);
-                adder_stage[1].adder[j]                  <= m ? mult_z[2 * j] : mult_z[2 * j] + mult_z[2 * j + 1];
-            end
-            for (int i = 2; i <= ADDER_STAGES; i++) begin
-                adder_stage[i].enable_adder              <= adder_stage[i - 1].enable_adder;   
-            end
-            for (int i = 2; i <= ADDER_STAGES; i++) begin
-                for (int j = 0; j < adder_stage[i].ADDER_SIZE; j++) begin
-                    automatic bit m = (j == (adder_stage[i].ADDER_SIZE - 1)) && (adder_stage[i - 1].ADDER_SIZE % 2);
-                    adder_stage[i].adder[j]              <= m ? adder_stage[i - 1].adder[2 * j] : adder_stage[i - 1].adder[2 * j] + adder_stage[i - 1].adder[2 * j + 1];
+    
+    genvar p;
+    generate
+        for (p = 1; p <= ADDER_STAGES; p++) begin
+            always_ff @(posedge clk) begin: ONE_DIM_CONVOL_KERNEL_ADDER
+                if (reset_synch) begin
+                    adder_stage[p].adder                     <= '0;
+                    adder_stage[p].enable_adder              <= '0;
                 end
-            end
+            end: ONE_DIM_CONVOL_KERNEL_ADDER
         end
-    end: ONE_DIM_CONVOL_KERNEL_ADDER
+    endgenerate
+
+//    always_ff @(posedge clk) begin: ONE_DIM_CONVOL_KERNEL_ADDER
+//        if (reset_synch) begin
+//            for (int i = 1; i <= ADDER_STAGES; i++) begin
+//                adder_stage[i].adder                     <= '0;
+//                adder_stage[i].enable_adder              <= '0;
+//            end
+//        end else begin
+//            adder_stage[1].enable_adder                  <= enable_mult_z;
+//            for (int j = 0; j < adder_stage[0].ADDER_SIZE; j++) begin
+//                automatic bit m = (j == (adder_stage[1].ADDER_SIZE - 1)) && (WINDOW_SIZE % 2);
+//                adder_stage[1].adder[j]                  <= m ? mult_z[2 * j] : mult_z[2 * j] + mult_z[2 * j + 1];
+//            end
+//            for (int i = 2; i <= ADDER_STAGES; i++) begin
+//                adder_stage[i].enable_adder              <= adder_stage[i - 1].enable_adder;   
+//            end
+//            for (int i = 2; i <= ADDER_STAGES; i++) begin
+//                for (int j = 0; j < adder_stage[i].ADDER_SIZE; j++) begin
+//                    automatic bit m = (j == (adder_stage[i].ADDER_SIZE - 1)) && (adder_stage[i - 1].ADDER_SIZE % 2);
+//                    adder_stage[i].adder[j]              <= m ? adder_stage[i - 1].adder[2 * j] : adder_stage[i - 1].adder[2 * j] + adder_stage[i - 1].adder[2 * j + 1];
+//                end
+//            end
+//        end
+//    end: ONE_DIM_CONVOL_KERNEL_ADDER
 //-----------------------------------------------------------------------------
     always_ff @(posedge clk) begin: ONE_DIM_CONVOL_KERNEL_OUTPUT_DATA
         if (reset_synch) begin

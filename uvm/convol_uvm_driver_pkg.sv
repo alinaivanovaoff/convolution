@@ -41,7 +41,7 @@ package convol_uvm_driver_pkg;
      import convol_uvm_transaction_pkg::*;
 //-----------------------------------------------------------------------------
      class convol_driver #(type TTYPE) extends uvm_driver #(TTYPE);
-          `uvm_component_utils (convol_driver)
+          `uvm_component_utils (convol_driver #(TTYPE))
  
           protected virtual convol_data_intf vintf;
  
@@ -51,7 +51,7 @@ package convol_uvm_driver_pkg;
  
           function void build_phase (uvm_phase phase);
                super.build_phase(phase);
-               uvm_config_db #(virtual frm_if)::get(this, "", "frm_if", vintf);
+               uvm_config_db #(virtual convol_data_intf)::get(this, "", "convol_data_intf", vintf);
           endfunction: build_phase
 //----------------------------------------------------------------------------- 
           task run_phase (uvm_phase phase);

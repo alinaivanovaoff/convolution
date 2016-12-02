@@ -33,7 +33,8 @@
 //-----------------------------------------------------------------------------
 `timescale 1 ns / 1 ps
 //----------------------------------------------------------------------------- 
-`include "../rtl/settings_pkg.sv"
+`include "settings_pkg.sv"
+`include "one_dim_convol_kernel.sv"
 //-----------------------------------------------------------------------------
 module frame_dut import settings_pkg::*; (
 //-----------------------------------------------------------------------------
@@ -50,12 +51,12 @@ module frame_dut import settings_pkg::*; (
 //-----------------------------------------------------------------------------
     one_dim_convol_kernel OneDimConvolKernel (
         .clk                                              (TbMainIntf.clk),
-    	.reset                                            (TbMainIntf.reset),
-    	.input_data                                       (ConvolDataIntf.input_data),
-    	.enable                                           (ConvolDataIntf.enable),
-   		.coeff                                            (ConvolDataIntf.coeff),
-    	.output_data                                      (ConvolResultIntf.output_data),
-    	.output_data_valid                                (ConvolResultIntf.output_data_valid));
+        .reset                                            (TbMainIntf.reset),
+        .input_data                                       (ConvolDataIntf.input_data),
+        .enable                                           (ConvolDataIntf.enable),
+        .coeff                                            (ConvolDataIntf.coeff),
+        .output_data                                      (ConvolResultIntf.output_data),
+        .output_data_valid                                (ConvolResultIntf.output_data_valid));
 //-----------------------------------------------------------------------------
 // Signal Section
 //-----------------------------------------------------------------------------

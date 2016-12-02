@@ -37,7 +37,7 @@
 //-----------------------------------------------------------------------------
 package convol_uvm_sequence_pkg;
     import uvm_pkg::*;
-    import nnfpga_uvm_transaction_pkg::*;
+    import convol_uvm_transaction_pkg::*;
 //-----------------------------------------------------------------------------
     class convol_sequence #(type TTYPE) extends uvm_sequence #(TTYPE);
         `uvm_object_utils(convol_sequence #(TTYPE))
@@ -50,7 +50,7 @@ package convol_uvm_sequence_pkg;
             TTYPE cv_tx;
  
             repeat(40) begin
-                cv_tx = TTYPE::type_id::create(...
+                cv_tx = TTYPE::type_id::create(.name("req"), .contxt(get_full_name()));
  
                 start_item(cv_tx);
                     assert(cv_tx.randomize());

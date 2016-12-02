@@ -34,19 +34,21 @@
 `timescale 1 ns / 1 ps
 //-----------------------------------------------------------------------------
 `include "uvm_macros.svh"
+`include "convol_uvm_transaction_pkg.sv"
+`include "convol_uvm_agent_pkg.sv"
+`include "convol_uvm_scoreboard_pkg.sv"
 //-----------------------------------------------------------------------------
 package convol_uvm_env_pkg;
     import uvm_pkg::*;
     import convol_uvm_transaction_pkg::*;
     import convol_uvm_agent_pkg::*;
     import convol_uvm_scoreboard_pkg::*;
-    import convol_uvm_pkg::*;
 //-----------------------------------------------------------------------------
-    class convol_env extends uvm_env;
-        `uvm_component_utils(convol_env)
+    class convol_env #(type IN_TYPE, type OUT_TYPE) extends uvm_env;
+        `uvm_component_utils(convol_env #(IN_TYPE, OUT_TYPE))
 //-----------------------------------------------------------------------------
-        convol_agent            cv_agnt;
-        convol_uvm_scoreboard   sb;
+        convol_agent #(IN_TYPE, OUT_TYPE) cv_agnt;
+        convol_uvm_scoreboard #(OUT_TYPE)      sb;
 //-----------------------------------------------------------------------------
         function new(string name, uvm_component parent);
             super.new(name, parent);
@@ -54,8 +56,8 @@ package convol_uvm_env_pkg;
 //-----------------------------------------------------------------------------
         function void build_phase(uvm_phase phase);
             super.build_phase(phase);
-            cv_agnt  = convol_agent::type_id::create(.name("cv_agnt"), .parent(this));
-            sb       = convol_uvm_scoreboard::type_id::create(.name("sb"), .parent(this));
+            cv_agnt  = convol_agent #(IN_TYPE, OUT_TYPE)::type_id::create(.name("cv_agnt"), .parent(this));
+            sb       = convol_uvm_scoreboard #(OUT_TYPE)::type_id::create(.name("sb"), .parent(this));
         endfunction: build_phase
 //-----------------------------------------------------------------------------
         function void connect_phase(uvm_phase phase);

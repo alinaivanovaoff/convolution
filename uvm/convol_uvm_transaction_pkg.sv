@@ -38,7 +38,6 @@
 package convol_uvm_transaction_pkg;
 //-----------------------------------------------------------------------------
     import uvm_pkg::*;
-    import nnfpga_uvm_pkg::*;
 //-----------------------------------------------------------------------------
     class convol_transaction #(parameter DATA_SIZE) extends uvm_sequence_item;
 //-----------------------------------------------------------------------------
