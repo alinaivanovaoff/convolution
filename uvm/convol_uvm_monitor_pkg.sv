@@ -39,14 +39,17 @@ package convol_uvm_monitor_pkg;
     import uvm_pkg::*;
     import convol_uvm_transaction_pkg::*;
 //-----------------------------------------------------------------------------
-    class bus_monitor #(type TTYPE) extends uvm_monitor;
+//    class bus_monitor extends uvm_monitor;
+    class bus_monitor #(parameter type TTYPE = convol_transaction) extends uvm_monitor;
         `uvm_component_param_utils(bus_monitor #(TTYPE))
+//        `uvm_component_param_utils(bus_monitor)
 
         uvm_analysis_port #(TTYPE) out_port;
+//        uvm_analysis_port out_port;
 
         protected virtual tb_main_intf                    tb_vintf;
         protected virtual convol_result_intf              vintf;
-        protected         TTYPE                           trans_collected;
+//        protected         TTYPE                           trans_collected;
 
         function new(string name, uvm_component parent);
             super.new(name, parent);
@@ -54,16 +57,20 @@ package convol_uvm_monitor_pkg;
 
         function void build_phase(uvm_phase phase);
             super.build_phase(phase);
-            void'(uvm_resource_db #(virtual tb_main_intf)::read_by_name(.scope("intfs"), .name("tb_main_intf"), .val(tb_vintf)));
-            uvm_config_db #(virtual convol_result_intf)::get(this,"","convol_result_intf", vintf);
+            void '(uvm_resource_db #(virtual tb_main_intf)::read_by_name(.scope("intfs"), .name("tb_main_intf"), .val(tb_vintf)));
+//            uvm_config_db #(virtual convol_result_intf)::get(this,"","convol_result_intf", vintf);
+            void '(uvm_resource_db #(virtual convol_result_intf)::read_by_name(.scope("intfs"), .name("convol_result_intf"), .val(vintf)));
             out_port = new(.name("out_port"), .parent(this));
         endfunction: build_phase
 
         virtual task run_phase(uvm_phase phase);
+            TTYPE                                         trans_collected;
+//            convol_transaction #(.DATA_SIZE(DATA_SIZE))     trans_collected;
             forever begin
                 @(posedge tb_vintf.clk);
                 if (vintf.output_data_valid) begin
                     trans_collected = TTYPE::type_id::create(.name("trans_collected"), .contxt(get_full_name()));
+                    //trans_collected = convol_transaction #(.DATA_SIZE(DATA_SIZE))::type_id::create(.name("trans_collected"), .contxt(get_full_name()));
                     trans_collected.data = vintf.output_data;
                     out_port.write(trans_collected);
                 end

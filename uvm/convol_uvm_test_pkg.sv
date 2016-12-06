@@ -44,10 +44,11 @@ package convol_uvm_test_pkg;
     import convol_uvm_sequence_pkg::*;
     import settings_pkg::*;
 //-----------------------------------------------------------------------------
-    class convol_uvm_test #(parameter IN_TYPE, parameter OUT_TYPE) extends uvm_test;
-        `uvm_component_utils(convol_uvm_test #(IN_TYPE, OUT_TYPE))
+    class convol_uvm_test extends uvm_test;
+        `uvm_component_utils(convol_uvm_test)
 //-----------------------------------------------------------------------------
-        convol_env #(.IN_TYPE(convol_transuction #(IN_TYPE)), .OUT_TYPE(convol_transuction #(OUT_TYPE))) env; //#(IN_TYPE, OUT_TYPE) env;//
+        convol_env #(.IN_TYPE(convol_transaction #(.DATA_SIZE(DATA_SIZE))),
+                     .OUT_TYPE(convol_transaction #(.DATA_SIZE(FULL_SIZE))))   env;
         uvm_table_printer                         printer;
         int                                       sim_status = 0;
 //-----------------------------------------------------------------------------
@@ -64,8 +65,7 @@ package convol_uvm_test_pkg;
             void'(uvm_resource_db #(virtual tb_main_intf)::read_by_name(.scope("intfs"), .name("tb_main_intf"), .val(vintf)));
             void'(uvm_resource_db #(int)::read_by_name(.scope("flags"), .name("sim_status"), .val(sim_status)));
 
-            env = convol_env #(IN_TYPE, OUT_TYPE)::type_id::create(.name("env"), .parent(this));//convol_env #(convol_transuction #(IN_TYPE), convol_transuction #(OUT_TYPE))::type_id::create(.name("env"), .parent(this));
-
+            env = convol_env #(.IN_TYPE(convol_transaction #(.DATA_SIZE(DATA_SIZE))), .OUT_TYPE(convol_transaction #(.DATA_SIZE(FULL_SIZE))))::type_id::create(.name("env"), .parent(this));//convol_env #(convol_transuction #(IN_TYPE), convol_transuction #(OUT_TYPE))::type_id::create(.name("env"), .parent(this));
             // Create a specific depth printer for printing the created topology
             printer = new();
             printer.knobs.depth = 3;
@@ -77,11 +77,11 @@ package convol_uvm_test_pkg;
         endfunction: end_of_elaboration_phase
 //-----------------------------------------------------------------------------
         virtual task main_phase(uvm_phase phase);
-            convol_sequence #(.REQ(IN_TYPE)) out_seq;//#(.REQ(convol_transaction #(DATA_SIZE))) out_seq;
+            convol_sequence #(.TTYPE(convol_transaction #(.DATA_SIZE(DATA_SIZE)))) out_seq;//#(.REQ(convol_transaction #(DATA_SIZE))) out_seq;
 
             phase.raise_objection(.obj(this));
-                out_seq = convol_sequence #(.REQ(IN_TYPE))::type_id::create(.name("out_seq"), .contxt(get_full_name()));//#(.REQ(convol_transaction #(DATA_SIZE)))::type_id::create(.name("out_seq"), .contxt(get_full_name()));
-                out_seq.start(env.out_agnt.sequencer);
+                out_seq = convol_sequence #(.TTYPE(convol_transaction #(.DATA_SIZE(DATA_SIZE))))::type_id::create(.name("out_seq"), .contxt(get_full_name()));//#(.REQ(convol_transaction #(DATA_SIZE)))::type_id::create(.name("out_seq"), .contxt(get_full_name()));
+                out_seq.start(env.cv_agnt.sequencer);
                 #10000;
             phase.drop_objection(.obj(this));
         endtask: main_phase

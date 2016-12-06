@@ -43,14 +43,21 @@ package convol_uvm_agent_pkg;
     import convol_uvm_driver_pkg::*;
     import convol_uvm_monitor_pkg::*;
 //-----------------------------------------------------------------------------
-    class convol_agent #(type IN_TYPE, type OUT_TYPE) extends uvm_agent;
-        `uvm_component_utils(convol_agent #(IN_TYPE, OUT_TYPE))
+//    class convol_agent extends uvm_agent;
+    class convol_agent #(type IN_TYPE = convol_transaction,
+                         type OUT_TYPE = convol_transaction) extends uvm_agent;
+        `uvm_component_param_utils(convol_agent #(IN_TYPE, OUT_TYPE))
+//        `uvm_component_utils(convol_agent)
 //-----------------------------------------------------------------------------
-        uvm_analysis_port #(OUT_TYPE) out_mon_port;//#(convol_transaction #(FULL_SIZE)) out_mon_port;
+        uvm_analysis_port #(OUT_TYPE) out_mon_port;
+//        uvm_analysis_port #(convol_transaction #(.DATA_SIZE(FULL_SIZE))) out_mon_port;
 //-----------------------------------------------------------------------------
-        uvm_sequencer #(.REQ(IN_TYPE)) sequencer;//#(.REQ(convol_transaction   #(DATA_SIZE))) sequencer;
-        convol_driver #(.TTYPE(IN_TYPE)) driver;//#(.TTYPE(convol_transaction #(DATA_SIZE))) driver;
-        bus_monitor   #(.TTYPE(OUT_TYPE)) out_mon;//#(.TTYPE(convol_transaction #(FULL_SIZE))) out_mon;
+        uvm_sequencer #(.REQ(IN_TYPE)) sequencer;
+//        uvm_sequencer #(.REQ(convol_transaction #(.DATA_SIZE(DATA_SIZE)))) sequencer;
+        convol_driver #(.TTYPE(IN_TYPE)) driver;
+//        convol_driver #(.TTYPE(convol_transaction #(.DATA_SIZE(DATA_SIZE)))) driver;
+        bus_monitor   #(.TTYPE(OUT_TYPE)) out_mon;
+//        bus_monitor #(.TTYPE(convol_transaction #(.DATA_SIZE(FULL_SIZE)))) out_mon;
 //-----------------------------------------------------------------------------
         function new (string name, uvm_component parent);
             super.new(name, parent);
@@ -59,10 +66,13 @@ package convol_uvm_agent_pkg;
         function void build_phase(uvm_phase phase);
             super.build_phase(phase);
             out_mon_port   = new(.name("out_mon_port"), .parent(this));
-            out_mon        = bus_monitor #(.TTYPE(OUT_TYPE))::type_id::create("out_mon", this);//#(.TTYPE(convol_transaction #(FULL_SIZE)))::type_id::create("out_mon", this);
+            out_mon        = bus_monitor #(.TTYPE(OUT_TYPE))::type_id::create("out_mon", this);
+            //out_mon        = bus_monitor #(.TTYPE(convol_transaction #(.DATA_SIZE(FULL_SIZE))))::type_id::create("out_mon", this);
             if (get_is_active() == UVM_ACTIVE) begin
-                sequencer = uvm_sequencer #(.REQ(OUT_TYPE))::type_id::create("sequencer", this);//#(.REQ(convol_transaction #(FULL_SIZE)))::type_id::create("sequencer", this);
-                driver    = convol_driver #(.TTYPE(OUT_TYPE))::type_id::create("driver", this);//#(.TTYPE(convol_transaction #(FULL_SIZE)))::type_id::create("driver", this);
+                sequencer = uvm_sequencer #(.REQ(IN_TYPE))::type_id::create("sequencer", this);
+                //sequencer = uvm_sequencer #(.REQ(convol_transaction #(.DATA_SIZE(DATA_SIZE))))::type_id::create("sequencer", this);
+                driver    = convol_driver #(.TTYPE(IN_TYPE))::type_id::create("driver", this);
+                //driver    = convol_driver #(.TTYPE(convol_transaction #(.DATA_SIZE(DATA_SIZE))))::type_id::create("driver", this);
             end
         endfunction: build_phase
 //-----------------------------------------------------------------------------

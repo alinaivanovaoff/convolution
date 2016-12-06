@@ -37,36 +37,36 @@
 //-----------------------------------------------------------------------------
 package convol_uvm_driver_pkg;
 //-----------------------------------------------------------------------------
-     import uvm_pkg::*;
-     import convol_uvm_transaction_pkg::*;
+    import uvm_pkg::*;
+    import convol_uvm_transaction_pkg::*;
 //-----------------------------------------------------------------------------
-     class convol_driver #(type TTYPE) extends uvm_driver #(TTYPE);
-          `uvm_component_utils (convol_driver #(TTYPE))
- 
-          protected virtual convol_data_intf vintf;
- 
-          function new (string name, uvm_component parent);
-               super.new(name, parent);
-          endfunction: new
- 
-          function void build_phase (uvm_phase phase);
-               super.build_phase(phase);
-               uvm_config_db #(virtual convol_data_intf)::get(this, "", "convol_data_intf", vintf);
-          endfunction: build_phase
+    class convol_driver #(type TTYPE = convol_transaction) extends uvm_driver #(TTYPE);
+        `uvm_component_param_utils (convol_driver #(TTYPE))
+
+        protected virtual convol_data_intf vintf;
+
+        function new (string name, uvm_component parent);
+            super.new(name, parent);
+        endfunction: new
+
+        function void build_phase (uvm_phase phase);
+            super.build_phase(phase);
+//            uvm_config_db #(virtual convol_data_intf)::get(this, "", "convol_data_intf", vintf);
+            void '(uvm_resource_db #(virtual convol_data_intf)::read_by_name(.scope("intfs"), .name("convol_data_intf"), .val(vintf)));
+        endfunction: build_phase
 //----------------------------------------------------------------------------- 
-          task run_phase (uvm_phase phase);
-               vintf.input_data                          = '0;
-               vintf.enable                              = '0;
- 
-               forever begin
-                    seq_item_port.get_next_item(req);
-                    @(posedge vintf.clk);
-                    vintf.enable                         = '1;
-                    vintf.input_data                     = req.data;
-                    seq_item_port.item_done();
-               end
-          endtask: run_phase
+        task run_phase (uvm_phase phase);
+            vintf.input_data                          = '0;
+            vintf.enable                              = '0;
+            forever begin
+                seq_item_port.get_next_item(req);
+                @(posedge vintf.clk);
+                vintf.enable                          = '1;
+                vintf.input_data                      = req.data;
+                seq_item_port.item_done();
+            end
+        endtask: run_phase
 //-----------------------------------------------------------------------------
-     endclass: convol_driver
+    endclass: convol_driver
 //-----------------------------------------------------------------------------
 endpackage: convol_uvm_driver_pkg

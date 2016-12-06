@@ -39,7 +39,7 @@ package convol_uvm_transaction_pkg;
 //-----------------------------------------------------------------------------
     import uvm_pkg::*;
 //-----------------------------------------------------------------------------
-    class convol_transaction #(parameter DATA_SIZE) extends uvm_sequence_item;
+    class convol_transaction #(parameter DATA_SIZE = 16) extends uvm_sequence_item;
 //-----------------------------------------------------------------------------
         rand bit signed [DATA_SIZE-1:0]                   data;
 //-----------------------------------------------------------------------------
@@ -47,9 +47,7 @@ package convol_uvm_transaction_pkg;
             super.new(name);
         endfunction: new
 //----------------------------------------------------------------------------- 
-        `uvm_object_utils_begin(convol_transaction)
-        `uvm_field_int(input_data, UVM_ALL_ON)
-        `uvm_object_utils_end
+        `uvm_object_param_utils(convol_transaction #(DATA_SIZE))
 //-----------------------------------------------------------------------------
     endclass: convol_transaction
 //-----------------------------------------------------------------------------

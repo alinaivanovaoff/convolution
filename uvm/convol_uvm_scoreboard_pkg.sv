@@ -39,12 +39,12 @@ package convol_uvm_scoreboard_pkg;
     import uvm_pkg::*;
     import convol_uvm_transaction_pkg::*;
 //-----------------------------------------------------------------------------
-    class convol_uvm_scoreboard #(type OUT_TYPE) extends uvm_scoreboard;
-        `uvm_component_utils(convol_uvm_scoreboard #(OUT_TYPE))
+    class convol_scoreboard #(type OUT_TYPE = convol_transaction) extends uvm_scoreboard;
+        `uvm_component_param_utils(convol_scoreboard #(OUT_TYPE))
 
         uvm_analysis_export #(OUT_TYPE)    out_mon_export;//#(convol_transaction #(FULL_SIZE))    out_mon_export;
         uvm_tlm_analysis_fifo #(OUT_TYPE)  out_mon_fifo;//#(convol_transaction #(FULL_SIZE))  out_mon_fifo;
-        OUT_TYPE out_trans;// convol_transaction #(FULL_SIZE) out_trans;
+//        OUT_TYPE out_trans;// convol_transaction #(FULL_SIZE) out_trans;
 
         int error;
 //-----------------------------------------------------------------------------
@@ -64,6 +64,7 @@ package convol_uvm_scoreboard_pkg;
         endfunction: connect_phase
 //-----------------------------------------------------------------------------
         virtual task run_phase(uvm_phase phase);
+            OUT_TYPE out_trans;
             int counter = 0;
             error = 1;
             forever begin: out_checks
@@ -75,6 +76,6 @@ package convol_uvm_scoreboard_pkg;
             end: out_checks
         endtask: run_phase
 //-----------------------------------------------------------------------------
-    endclass: convol_uvm_scoreboard
+    endclass: convol_scoreboard
 //-----------------------------------------------------------------------------
 endpackage: convol_uvm_scoreboard_pkg

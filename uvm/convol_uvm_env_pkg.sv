@@ -44,11 +44,13 @@ package convol_uvm_env_pkg;
     import convol_uvm_agent_pkg::*;
     import convol_uvm_scoreboard_pkg::*;
 //-----------------------------------------------------------------------------
-    class convol_env #(type IN_TYPE, type OUT_TYPE) extends uvm_env;
-        `uvm_component_utils(convol_env #(IN_TYPE, OUT_TYPE))
+    class convol_env #(type IN_TYPE = convol_transaction,
+                       type OUT_TYPE = convol_transaction) extends uvm_env;
+        `uvm_component_param_utils(convol_env #(IN_TYPE, OUT_TYPE))
 //-----------------------------------------------------------------------------
-        convol_agent #(IN_TYPE, OUT_TYPE) cv_agnt;
-        convol_uvm_scoreboard #(OUT_TYPE)      sb;
+//        convol_agent #(.IN_TYPE(IN_TYPE), .OUT_TYPE(OUT_TYPE)) cv_agnt;
+        convol_agent #(.IN_TYPE(IN_TYPE), .OUT_TYPE(OUT_TYPE)) cv_agnt;
+        convol_scoreboard #(.OUT_TYPE(OUT_TYPE))      sb;
 //-----------------------------------------------------------------------------
         function new(string name, uvm_component parent);
             super.new(name, parent);
@@ -56,8 +58,8 @@ package convol_uvm_env_pkg;
 //-----------------------------------------------------------------------------
         function void build_phase(uvm_phase phase);
             super.build_phase(phase);
-            cv_agnt  = convol_agent #(IN_TYPE, OUT_TYPE)::type_id::create(.name("cv_agnt"), .parent(this));
-            sb       = convol_uvm_scoreboard #(OUT_TYPE)::type_id::create(.name("sb"), .parent(this));
+            cv_agnt  = convol_agent #(.IN_TYPE(IN_TYPE), .OUT_TYPE(OUT_TYPE))::type_id::create(.name("cv_agnt"), .parent(this));
+            sb       = convol_scoreboard #(.OUT_TYPE(OUT_TYPE))::type_id::create(.name("sb"), .parent(this));
         endfunction: build_phase
 //-----------------------------------------------------------------------------
         function void connect_phase(uvm_phase phase);

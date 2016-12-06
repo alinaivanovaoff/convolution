@@ -73,10 +73,12 @@ module frame_tb;
     initial begin: FRAME_TB_TEST_INSTANCE
 //-----------------------------------------------------------------------------
         // registers the Interfaces in the configuration block so that other blocks can use it
-        uvm_resource_db # (virtual tb_main_intf)      ::set(.scope("intfs"), .name("tb_main_intf"), .val(TbMainIntf));
-        uvm_resource_db # (int)                       ::set(.scope("flags"), .name("sim_status"), .val(sim_status));
-        uvm_config_db   # (virtual convol_data_intf)  ::set(null, "*driver","convol_data_intf", ConvolDataIntf);
-        uvm_config_db   # (virtual convol_result_intf)::set(null, "*out_mon","convol_result_intf", ConvolResultIntf);
+        void '(uvm_resource_db #(virtual tb_main_intf)      ::set(.scope("intfs"), .name("tb_main_intf"), .val(TbMainIntf)));
+        void '(uvm_resource_db #(int)                       ::set(.scope("flags"), .name("sim_status"), .val(sim_status)));
+        //uvm_config_db   # (virtual convol_data_intf)  ::set(null, "*driver","convol_data_intf", ConvolDataIntf);
+        void '(uvm_resource_db #(virtual convol_data_intf)  ::set(.scope("intfs"), .name("convol_data_intf"), .val(ConvolDataIntf)));
+        //uvm_config_db   # (virtual convol_result_intf)::set(null, "*out_mon","convol_result_intf", ConvolResultIntf);
+        void '(uvm_resource_db #(virtual convol_result_intf)::set(.scope("intfs"), .name("convol_result_intf"), .val(ConvolResultIntf)));
 //-----------------------------------------------------------------------------
         // executes the test
         run_test(); //+UVM_TESTNAME=convol_uvm_test #(DATA_SIZE, FULL_SIZE)
